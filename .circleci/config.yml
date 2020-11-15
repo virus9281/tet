@@ -1,0 +1,54 @@
+name: Compiling
+
+on:
+#  release:
+#    types: [published]
+#  push:
+#    branches:
+#      - master
+#    paths:
+#      - '.config'
+#  schedule:
+#    - cron: 0 8 * * 5
+  watch:
+    types: [started]
+    
+env:
+  ROM_URL: https://otafsg1.h2os.com/patch/amazone2/GLO/OnePlus6Oxygen/OnePlus6Oxygen_22.J.48_GLO_048_2010042239/OnePlus6Oxygen_22.J.48_OTA_048_all_2010042239_c0c1fee2ee.zip
+  ROM_NAME: OxygenOS for Android 10
+  ZIP_NAME: Oos
+  TZ: Asia/Kolkata
+  MIR: wet
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+       
+       - name: Scripts
+         run: |
+           git clone https://github.com/akhilnarang/scripts && cd scripts && bash setup/android_build_env.sh && cd .. && rm -rf scripts && mkdir ps
+           
+       - name: Repo Sync
+         run: |
+            repo init -u git://github.com/ProjectSakura/android.git -b 10 --depth=1 --groups=all,-notdefault,-device,-darwin,-x86,-mips
+            repo sync -c -j4 --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync
+
+       
+       - name: Clone Repos
+         run: git clone https://github.com/mahajant99/device_xiaomi_sakura -b lineage-17.1 device/xiaomi/sakura && git clone https://github.com/mahajant99/vendor_xiaomi vendor/xiaomi && git clone https://github.com/mahajant99/kernel_xiaomi_msm8953 kernel/xiaomi/msm8953
+       
+       - name: Build Env
+         run: |
+              . build/envsetup.sh
+              brunch sakura
+       
+       - name: CD
+         run: cd o*/t*/p*/s*
+       
+       - name: Wettransfer
+         run: |
+              curl -sL https://git.io/file-transfer | sh
+              ./transfer wet Project*       
