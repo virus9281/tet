@@ -29,26 +29,4 @@ jobs:
        
        - name: Scripts
          run: |
-           git clone https://github.com/akhilnarang/scripts && cd scripts && bash setup/android_build_env.sh && cd .. && rm -rf scripts && mkdir ps
-           
-       - name: Repo Sync
-         run: |
-            repo init -u git://github.com/ProjectSakura/android.git -b 10 --depth=1 --groups=all,-notdefault,-device,-darwin,-x86,-mips
-            repo sync -c -j4 --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync
-
-       
-       - name: Clone Repos
-         run: git clone https://github.com/mahajant99/device_xiaomi_sakura -b lineage-17.1 device/xiaomi/sakura && git clone https://github.com/mahajant99/vendor_xiaomi vendor/xiaomi && git clone https://github.com/mahajant99/kernel_xiaomi_msm8953 kernel/xiaomi/msm8953
-       
-       - name: Build Env
-         run: |
-              . build/envsetup.sh
-              brunch sakura
-       
-       - name: CD
-         run: cd o*/t*/p*/s*
-       
-       - name: Wettransfer
-         run: |
-              curl -sL https://git.io/file-transfer | sh
-              ./transfer wet Project*       
+           df -h
